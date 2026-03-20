@@ -1,0 +1,35 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0, r8) readonly uniform image2D inputImage;
+layout(set = 0, binding = 1) buffer EdgeScores {
+    float scores[];
+};
+
+const mat3 sobel_x = mat3(
+    -1.0, 0.0, 1.0,
+    -2.0, 0.0, 2.0,
+    -1.0, 0.0, 1.0
+);
+
+const mat3 sobel_y = mat3(
+    -1.0, -2.0, -1.0,
+     0.0,  0.0,  0.0,
+     1.0,  2.0,  1.0
+);
+
+void main() {
+    ivec2 gid = ivec2(gl_GlobalInvocationID.xy);
+    float gx = 0.0, gy = 0.0;
+    
+    // Sobel convolution
+    for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+            float lum = imageLoad(inputImage, gid + ivec2(x,y)).r;
+            gx += lum * sobel_x[y+1][x+1];
+            gy += lum * sobel_y[y+1][x+1];
+        }
+    }
+    
+    scores[gid.y * imageSize(inputImage).x + gid.x] = sqrt(gx*gx + gy*gy);
+}

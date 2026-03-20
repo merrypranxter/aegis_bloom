@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Minimal entitlements only -->
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    
+    <!-- No network client (we use NSURLSession in separate process) -->
+    <key>com.apple.security.network.client</key>
+    <false/>
+    
+    <!-- No arbitrary file access -->
+    <key>com.apple.security.files.user-selected.read-only</key>
+    <true/>
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    <key>com.apple.security.temporary-exception.files.home-relative-path.read-only</key>
+    <array>
+        <string>/Library/Caches/com.aegisbloom/</string>
+    </array>
+    
+    <!-- No camera/mic (we use system picker) -->
+    <key>com.apple.security.device.camera</key>
+    <false/>
+    <key>com.apple.security.device.microphone</key>
+    <false/>
+    
+    <!-- Hardened runtime -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <false/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <false/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <false/>
+    <key>com.apple.security.cs.debugger</key>
+    <false/>
+    
+    <!-- Memory security -->
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <false/>
+</dict>
+</plist>

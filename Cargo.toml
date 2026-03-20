@@ -1,0 +1,90 @@
+[package]
+name = "aegisbloom"
+version = "1.2.3"
+edition = "2021"
+rust-version = "1.75.0" # MSRV
+authors = ["AegisBloom Team <team@aegisbloom.io>"]
+description = "Secure steganographic messenger with AI-aware obfuscation"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/aegisbloom/aegisbloom"
+keywords = ["steganography", "encryption", "privacy", "ai", "security"]
+categories = ["cryptography", "multimedia::images"]
+
+[dependencies]
+# Core crypto - vendored, audited
+aes-gcm = { path = "vendor/aes-gcm-0.10.3" }
+chacha20poly1305 = { path = "vendor/chacha20poly1305-0.10.1" }
+
+# Image processing - vendored
+image = { path = "vendor/image-0.24.8", default-features = false, features = ["png", "jpeg"] }
+
+# Zeroization - critical, vendored + formally verified
+zeroize = { path = "vendor/zeroize-1.7.0" }
+
+# Reed-Solomon - minimal dep, vendored
+reed-solomon-erasure = { path = "vendor/reed-solomon-erasure-6.0.0" }
+
+# Additional dependencies
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rand = "0.8"
+getrandom = "0.2"
+thiserror = "1.0"
+log = "0.4"
+
+# Security
+subtle = "2.5"
+constant_time_eq = "0.3"
+
+# Async (for network operations)
+tokio = { version = "1.35", features = ["full"], optional = true }
+
+[dev-dependencies]
+# Testing
+proptest = { path = "vendor/proptest-1.4.0" }
+criterion = "0.5"
+
+# Formal verification
+kani = { git = "https://github.com/model-checking/kani", tag = "kani-0.50.0", optional = true }
+
+[features]
+default = ["anti_forensics", "side_channel_resistance"]
+anti_forensics = ["zeroize", "memmap2", "libc"]
+side_channel_resistance = ["subtle", "num_cpus"]
+decoy_injection = ["fastrand"]
+resilient_embed = ["reed-solomon-erasure", "imageproc"]
+seccomp = []
+monitor = []
+metal = ["objc", "metal-rs"]
+vulkan = ["ash"]
+wasm = ["wasm-bindgen", "js-sys", "web-sys"]
+test-alloc = []
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.release]
+lto = "fat"
+opt-level = 3
+codegen-units = 1
+panic = "abort"
+strip = true
+overflow-checks = true
+
+[profile.hardened]
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+overflow-checks = true
+
+[[bench]]
+name = "embed_benchmark"
+harness = false
+
+[[bench]]
+name = "extract_benchmark"
+harness = false

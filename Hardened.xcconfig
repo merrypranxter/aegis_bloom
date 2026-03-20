@@ -1,0 +1,20 @@
+// Build settings for maximum security
+
+ENABLE_BITCODE = NO // Required for Rust libs
+DEPLOYMENT_POSTPROCESSING = YES
+STRIP_INSTALLED_PRODUCT = YES
+DEAD_CODE_STRIPPING = YES
+
+// Stack protection
+OTHER_LDFLAGS = -fstack-protector-strong
+
+// ASLR
+PIE = YES
+
+// Runtime checks
+CLANG_ADDRESS_SANITIZER = NO // Dev only
+CLANG_UNDEFINED_BEHAVIOR_SANITIZER = NO // Dev only
+ENABLE_TESTABILITY = NO
+
+// Code signing
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO
